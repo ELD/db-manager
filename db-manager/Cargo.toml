@@ -1,0 +1,22 @@
+[package]
+name = "db-manager"
+version = "0.1.0"
+authors = ["Eric Dattore <eric.dattore@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "dbmanager"
+path = "src/lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = ["postgres"]
+postgres = ["diesel/postgres", "diesel/r2d2"]
+rocket_integration = ["rocket"]
+
+[dependencies]
+diesel = { version = "1.4", optional = true }
+uuid = { version = "0.8", features = ["v4"] }
+url = "2.1"
+rocket = { version = "0.4", optional = true }

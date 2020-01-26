@@ -1,0 +1,25 @@
+[package]
+name = "rocket-example"
+version = "0.1.0"
+authors = ["Eric Dattore <eric.dattore@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+path = "src/lib.rs"
+name = "libexample"
+
+[[bin]]
+path = "src/bin/main.rs"
+name = "example"
+
+[dependencies]
+rocket = "0.4"
+rocket_contrib = { version = "0.4", features = ["databases", "diesel_postgres_pool"] }
+diesel = { version = "1.4", features = ["postgres", "extras"] }
+serde = { version = "1.0", features = ["derive"] }
+
+[dev-dependencies]
+db-manager = { path = "../db-manager", features = ["rocket_integration", "postgres"] }
+serde_json = "1.0"
+diesel_migrations = "1.4"

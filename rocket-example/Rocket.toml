@@ -1,0 +1,3 @@
+[global.databases.primary_db]
+url = "postgres://example@localhost/example"
+pool = 10
