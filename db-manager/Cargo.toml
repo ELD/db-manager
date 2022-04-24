@@ -13,10 +13,12 @@ path = "src/lib.rs"
 [features]
 default = ["postgres"]
 postgres = ["diesel/postgres", "diesel/r2d2"]
-rocket_integration = ["rocket"]
+rocket_integration = ["rocket", "rocket_sync_db_pools", "async-trait"]
 
 [dependencies]
 diesel = { version = "1.4", optional = true }
-uuid = { version = "0.8", features = ["v4"] }
+uuid = { version = "1.0", features = ["v4"] }
 url = "2.1"
-rocket = { version = "0.4", optional = true }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", branch = "master", optional = true }
+rocket_sync_db_pools = { git = "https://github.com/SergioBenitez/Rocket", branch = "master", optional = true }
+async-trait = { version = "0.1", optional = true }

@@ -1,0 +1,3 @@
+[default.databases.primary_db]
+url = "postgres://postgres:password@localhost/db-manager"
+pool = 10

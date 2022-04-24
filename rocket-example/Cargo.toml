@@ -14,8 +14,8 @@ path = "src/bin/main.rs"
 name = "example"
 
 [dependencies]
-rocket = "0.4"
-rocket_contrib = { version = "0.4", features = ["databases", "diesel_postgres_pool"] }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", branch = "master", features = [ "json" ] }
+rocket_sync_db_pools = { git = "https://github.com/SergioBenitez/Rocket", branch = "master", features = [ "diesel_postgres_pool" ] }
 diesel = { version = "1.4", features = ["postgres", "extras"] }
 serde = { version = "1.0", features = ["derive"] }
 

@@ -1,4 +1,4 @@
-use rocket_contrib::{database, databases::diesel::PgConnection};
+use rocket_sync_db_pools::{database, diesel};
 
 #[database("primary_db")]
-pub struct PrimaryDb(PgConnection);
+pub struct PrimaryDb(diesel::PgConnection);

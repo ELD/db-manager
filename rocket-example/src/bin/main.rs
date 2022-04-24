@@ -1,10 +1,12 @@
-#![feature(decl_macro, proc_macro_hygiene)]
-
 use libexample::db::PrimaryDb;
 
-fn main() {
-    rocket::ignite()
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
+    rocket::build()
         .attach(PrimaryDb::fairing())
         .mount("/todo", libexample::routes())
-        .launch();
+        .ignite()
+        .await?
+        .launch()
+        .await
 }

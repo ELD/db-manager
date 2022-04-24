@@ -9,16 +9,18 @@ This provides the facility to offer "transactional" integration tests, at least
 in the frame of keeping data hygienic.
 
 ## Roadmap
-### MVP - singleton database manager
-- [ ] support creating Postgres databases
-- [ ] support creating MySQL databases
-- [ ] support creating SQLite databases
+### 0.1 - Postgres and integration with Rocket
+- [x] support creating Postgres databases
+- [x] integrate with Rocket
 
-### Phase one - integration with web frameworks
-- [ ] integrate with Rocket
-
-### Phase two - support spinning up multiple databases with single manager
+### 0.2 - support spinning up multiple Diesel Postgres databases with single manager
 - [ ] support multiple database creations and teardowns
 
-### Phase three - expand connection support to other database libraries
+### 0.3 - Expanding Diesel backend support
+- [ ] support creating Diesel MySQL databases
+- [ ] support creating Diesel SQLite databases
+  - Not sure on this one. It might be solvable by just injecting `:memory:` as
+  the database type for SQLite.
+
+### 0.4+ - expand connection support to other database libraries and async drivers
 - TODO: Add a list of databases to target

@@ -8,9 +8,9 @@ pub struct Todo {
     pub done: bool,
 }
 
-#[derive(Insertable, Serialize, Deserialize, Copy, Clone)]
+#[derive(Insertable, Serialize, Deserialize, Clone)]
 #[table_name = "todo"]
-pub struct NewTodo<'a> {
-    pub description: &'a str,
+pub struct NewTodo {
+    pub description: String,
     pub done: bool,
 }

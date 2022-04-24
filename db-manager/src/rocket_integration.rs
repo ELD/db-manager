@@ -1,7 +1,8 @@
 use crate::manager::DatabaseManager;
-use rocket::config::Value;
-use rocket::fairing::{Fairing, Info, Kind};
-use rocket::Rocket;
+use rocket::fairing::{Fairing, Info, Kind, Result};
+use rocket::figment::providers::Serialized;
+use rocket::{Build, Rocket};
+use rocket_sync_db_pools::Config;
 
 pub struct RocketDatabaseManager {
     config_name: String,
@@ -13,52 +14,39 @@ impl RocketDatabaseManager {
     }
 }
 
+#[async_trait::async_trait]
 impl Fairing for RocketDatabaseManager {
     fn info(&self) -> Info {
         Info {
             name: "Database Manager Fairing",
-            kind: Kind::Attach,
+            kind: Kind::Ignite,
         }
     }
 
-    fn on_attach(&self, rocket: Rocket) -> Result<Rocket, Rocket> {
-        let mut databases = rocket.config().get_table("databases").unwrap().clone();
-        let mut database_config = databases
-            .get(&self.config_name)
-            .unwrap()
-            .as_table()
-            .unwrap()
-            .clone();
+    async fn on_ignite(&self, rocket: Rocket<Build>) -> Result {
+        let current_config = Config::from(&self.config_name, &rocket).unwrap();
+        let mut manager = DatabaseManager::new(current_config.url).unwrap();
 
-        let base_url = database_config.get("url").unwrap().as_str().unwrap();
-        let mut manager = DatabaseManager::new(base_url);
-        manager.create_database().unwrap();
-        let database_url = manager.get_connection_url();
+        let handle = rocket::tokio::task::spawn_blocking(|| {
+            manager.create_database().unwrap();
+            manager
+        });
 
-        database_config.insert("url".to_string(), Value::String(database_url));
-        databases.insert(
-            self.config_name.clone(),
-            Value::Table(database_config.clone()),
-        );
+        let manager = handle.await.unwrap();
 
-        let extras = rocket
-            .config()
-            .extras()
-            .map(|(key, value)| {
-                let value = if key == "databases" {
-                    Value::Table(databases.clone())
-                } else {
-                    value.clone()
-                };
+        let updated_config = rocket_sync_db_pools::Config {
+            url: manager.get_connection_url(),
+            pool_size: 10,
+            timeout: 5,
+        };
 
-                (key.to_string(), value)
-            })
-            .collect();
+        let figment = rocket.figment().clone().merge(Serialized::global(
+            &format!("databases.{}", &self.config_name),
+            updated_config,
+        ));
 
-        let mut config = rocket.config().clone();
-        config.set_extras(extras);
-
-        // FIXME: The use of `rocket::custom` overrides any other settings set up to this point. This could squash a user's other fairings or routes. It must be the first method on Rocket they call or they could lose everything.
-        Ok(rocket::custom(config).manage(manager))
+        // // FIXME: The use of `rocket::custom` overrides any other settings set up to this point. This could squash a user's other fairings or routes. It must be the first method on Rocket they call or they could lose everything.
+        // Ok(rocket::custom(config).manage(manager))
+        Ok(rocket.configure(figment).manage(manager))
     }
 }

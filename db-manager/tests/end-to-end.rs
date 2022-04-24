@@ -4,7 +4,8 @@ mod postgres {
 
     #[test]
     fn it_creates_a_postgres_database_with_random_name() {
-        let mut manager = DatabaseManager::new("postgres://edattore@localhost/postgres");
+        let mut manager =
+            DatabaseManager::new("postgres://postgres:password@localhost/db-manager").unwrap();
         let db_name = manager.create_database().unwrap();
 
         assert!(manager.database_exists(db_name));
@@ -12,18 +13,21 @@ mod postgres {
 
     #[test]
     fn it_drops_the_postgres_databases_it_creates() {
-        let mut manager = DatabaseManager::new("postgres://edattore@localhost/postgres");
+        let mut manager =
+            DatabaseManager::new("postgres://postgres:password@localhost/db-manager").unwrap();
         let db_name = manager.create_database().unwrap();
 
         drop(manager);
 
-        manager = DatabaseManager::new("postgres://edattore@localhost/postgres");
+        manager =
+            DatabaseManager::new("postgres://postgres:password@localhost/db-manager").unwrap();
         assert!(!manager.database_exists(db_name));
     }
 
     #[test]
     fn it_returns_a_valid_database_url() {
-        let mut manager = DatabaseManager::new("postgres://edattore@localhost/postgres");
+        let mut manager =
+            DatabaseManager::new("postgres://postgres:password@localhost/db-manager").unwrap();
         manager.create_database().unwrap();
 
         let url = url::Url::parse(&manager.get_connection_url());

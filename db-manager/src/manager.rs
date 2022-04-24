@@ -1,8 +1,9 @@
+use crate::error::ManagerError;
 use diesel::connection::SimpleConnection;
-use diesel::{
-    r2d2::{ConnectionManager, Pool},
-    PgConnection,
-};
+#[cfg(any(feature = "postgres"))]
+use diesel::r2d2::{ConnectionManager, Pool};
+#[cfg(feature = "postgres")]
+use diesel::PgConnection;
 use url::Url;
 use uuid::Uuid;
 
@@ -20,18 +21,16 @@ pub struct DatabaseManager {
 }
 
 impl DatabaseManager {
-    pub fn new<S: Into<String>>(database_url: S) -> Self {
-        let database_url = Url::parse(&database_url.into())
-            .unwrap()
-            .join("postgres")
-            .unwrap();
+    pub fn new<S: Into<String>>(database_url: S) -> Result<Self, ManagerError> {
+        let database_url = database_url.into();
+        let database_url = Url::parse(&database_url).unwrap().join("postgres").unwrap();
         let manager = ConnectionManager::new(database_url.to_string());
         let connection = Pool::builder().max_size(1).build(manager).unwrap();
-        Self {
+        Ok(Self {
             database_url,
             connection_pool: connection,
             database_name: None,
-        }
+        })
     }
 
     // TODO: Only work if a database hasn't been created yet
@@ -74,7 +73,7 @@ impl DatabaseManager {
     }
 
     fn random_database_name(&self) -> String {
-        format!("test_db_{}", Uuid::new_v4().to_simple().to_string())
+        format!("test_db_{}", Uuid::new_v4().as_simple())
     }
 }
 
