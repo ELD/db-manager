@@ -1,0 +1,19 @@
+[package]
+name = "test-stand"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+
+[dependencies]
+rocket = { git = "https://github.com/SergioBenitez/Rocket", branch = "master" }
+codegen = { path = "../codegen" }
+rocket_db_pools = { git = "https://github.com/SergioBenitez/Rocket", branch = "master", features = ["sqlx_postgres"] }
+uuid = { version = "1.0", features = ["v4"] }
+sqlx = { version = "0.6", features = ["runtime-tokio-rustls", "postgres"] }
+thiserror = "1.0"
+
+[dev-dependencies]
+rocket_db_pools = { git = "https://github.com/SergioBenitez/Rocket", branch = "master", features = ["sqlx_postgres"] }
+sqlx = { version = "0.6", features = ["runtime-tokio-rustls", "postgres"] }

@@ -1,0 +1,5 @@
+[default.databases.test]
+url = "postgres://app:password@localhost:5432/app_test"
+
+[default.databases.ddl_test]
+url = "postgres://ddl:password@localhost:5432/postgres"
