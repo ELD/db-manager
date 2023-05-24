@@ -1,3 +1,5 @@
+# _Note: This repository has (finally) been superseded by [TestStand](https://github.com/ELD/TestStand). If this functionality is still of use to you, please take a look at that crate for support in Rocket (and perhaps other frameworks, too)._
+
 # Database Manager
 
 ## Purpose
